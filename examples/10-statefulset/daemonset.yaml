@@ -1,0 +1,31 @@
+# DaemonSet — 모든 노드에 정확히 1개씩 Pod를 배치 (로그 수집, 모니터링 에이전트 등)
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: logging
+spec:
+  selector:
+    matchLabels:
+      app: fluentd
+  template:
+    metadata:
+      labels:
+        app: fluentd
+    spec:
+      # [함정] tolerations 없으면 control-plane/master 노드에는 스케줄링되지 않는다
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+      containers:
+        - name: fluentd
+          image: fluent/fluentd:v1.16
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+# [함정] DaemonSet은 replicas 필드가 없다 — 노드 수에 따라 자동 결정됨

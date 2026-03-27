@@ -1,0 +1,15 @@
+# 가장 기본적인 Pod 정의
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.25-alpine
+      ports:
+        - containerPort: 80
+      # 주의: Pod을 직접 만들면 재시작 보장이 없다
+      # 프로덕션에서는 반드시 Deployment를 사용

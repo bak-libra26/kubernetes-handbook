@@ -1,0 +1,22 @@
+# StorageClass: PVC 생성 시 PV를 동적으로 프로비저닝
+# 주의: kind 클러스터는 standard StorageClass가 기본 제공됨
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-storage
+provisioner: rancher.io/local-path
+reclaimPolicy: Delete
+# 주의: Delete=PVC 삭제 시 데이터도 삭제, Retain=데이터 보존
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fast-pvc
+spec:
+  storageClassName: fast-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

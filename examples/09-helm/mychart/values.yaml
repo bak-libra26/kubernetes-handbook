@@ -1,0 +1,12 @@
+# 기본 설정값 (helm install 시 --set 또는 -f로 오버라이드 가능)
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+
+service:
+  type: ClusterIP
+  port: 80
+
+# 주의: values.yaml의 키 이름은 templates에서 .Values.키이름으로 참조

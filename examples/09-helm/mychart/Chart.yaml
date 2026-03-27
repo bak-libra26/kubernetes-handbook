@@ -1,0 +1,7 @@
+# Helm 차트 메타데이터
+apiVersion: v2
+name: mychart
+description: Nginx 배포 연습용 Helm 차트
+type: application
+version: 0.1.0
+appVersion: "1.27"

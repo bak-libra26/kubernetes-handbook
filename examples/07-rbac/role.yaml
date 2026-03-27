@@ -1,0 +1,13 @@
+# Role: 특정 네임스페이스 내 리소스 권한 정의
+# 주의: Role은 네임스페이스 범위, ClusterRole은 클러스터 전체 범위
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: default
+rules:
+  - apiGroups: [""]
+    # 주의: ""는 core API 그룹 (Pod, Service 등)
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
+    # 가능한 verbs: get, list, watch, create, update, patch, delete

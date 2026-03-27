@@ -1,0 +1,24 @@
+# 기본: 모든 인그레스 트래픽 차단
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+# 예외: app=web Pod만 80 포트 허용
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress:
+    - ports:
+        - port: 80
+  # 주의: NetworkPolicy는 CNI 플러그인이 지원해야 동작한다
+  # Flannel은 미지원, Calico/Cilium은 지원

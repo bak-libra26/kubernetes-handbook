@@ -1,0 +1,35 @@
+# StatefulSet — 데이터베이스처럼 순서·고유 ID가 필요한 워크로드용
+# 핵심: Pod 이름이 ordinal(0,1,2…)로 고정되고, PVC도 Pod별로 1:1 매핑된다
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres-headless   # 반드시 Headless Service 이름과 일치해야 함
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  # [함정] volumeClaimTemplates는 spec 바로 아래에 위치해야 한다 (template 안이 아님)
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+# [함정] StatefulSet 삭제 시 PVC는 자동 삭제되지 않는다 — 수동으로 정리해야 데이터 유실/비용 누수 방지

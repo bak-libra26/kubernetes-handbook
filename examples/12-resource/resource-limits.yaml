@@ -1,0 +1,33 @@
+# 리소스 관리 — requests(스케줄링 기준)와 limits(최대 사용량)를 반드시 설정
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-demo
+spec:
+  containers:
+    - name: app
+      image: nginx:1.25
+      resources:
+        requests:          # 스케줄러가 노드 선택 시 참고하는 최소 보장량
+          cpu: "250m"
+          memory: "128Mi"
+        limits:            # 초과 시 CPU는 쓰로틀링, 메모리는 OOMKilled
+          cpu: "500m"
+          memory: "256Mi"
+# [함정] requests 없이 limits만 설정하면 requests = limits로 자동 설정되어
+# 노드 리소스를 과도하게 예약할 수 있다
+---
+# LimitRange — 네임스페이스 내 기본 리소스 제한 (개발자가 빠뜨려도 자동 적용)
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+spec:
+  limits:
+    - default:             # limits 기본값
+        cpu: "500m"
+        memory: "256Mi"
+      defaultRequest:      # requests 기본값
+        cpu: "100m"
+        memory: "64Mi"
+      type: Container

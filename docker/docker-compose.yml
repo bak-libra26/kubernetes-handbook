@@ -1,0 +1,19 @@
+services:
+  kind-cluster:
+    image: docker:dind
+    privileged: true
+    ports:
+      - "6443:6443"
+      - "30000-30100:30000-30100"
+    volumes:
+      - kind-data:/var/lib/docker
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    healthcheck:
+      test: ["CMD", "docker", "info"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  kind-data:

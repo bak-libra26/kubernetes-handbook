@@ -1,0 +1,19 @@
+# RoleBinding: Role을 사용자/그룹/ServiceAccount에 연결
+# 주의: roleRef는 생성 후 변경 불가 (삭제 후 재생성 필요)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: default
+  # User 또는 Group도 가능
+  # - kind: User
+  #   name: jane
+  #   apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io

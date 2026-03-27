@@ -1,0 +1,42 @@
+# 카나리 배포: 동일 label로 두 Deployment를 묶음
+# Service가 label 기반으로 트래픽을 분산함
+# 주의: replicas 비율로 트래픽 비율을 간접 조절 (정밀 제어는 Istio 필요)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-stable
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: canary-app
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: canary-app
+        track: stable
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.26-alpine
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-new
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: canary-app
+      track: canary
+  template:
+    metadata:
+      labels:
+        app: canary-app
+        track: canary
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
